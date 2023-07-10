@@ -6,16 +6,16 @@ btnStartEl.addEventListener('click', onStart);
 btnStopEl.addEventListener('click', onStop);
 
 function onStart(evt) {
-  evt.target.disabled = true;
+  btnStartEl.disabled = true;
   btnStopEl.disabled = false;
   timerId = setInterval(() => {
     bodyEl.style.backgroundColor = getRandomHexColor();
   }, 1000);
 }
 function onStop(evt) {
-  clearInterval(timerId);
-  evt.target.disabled = true;
+  btnStopEl.disabled = true;
   btnStartEl.disabled = false;
+  clearInterval(timerId);
 }
 
 function getRandomHexColor() {

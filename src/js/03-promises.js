@@ -1,10 +1,6 @@
 import Notiflix from 'notiflix';
 
 const form = document.querySelector('.form');
-const inputDelayEl = document.querySelector('[name="delay"]');
-const inputStepEl = document.querySelector('[name="step"]');
-const inputAmountEl = document.querySelector('[name="amount"]');
-const btnSubmitEl = document.querySelector('button');
 
 function createPromise(position, delay) {
   return new Promise((resolve, reject) => {
@@ -23,11 +19,12 @@ function createPromise(position, delay) {
 
 const onSabmit = evt => {
   evt.preventDefault();
+  const { delay, step, amount } = evt.currentTarget.elements;
 
-  let firstDelay = Number(inputDelayEl.value);
-  let delayStep = Number(inputStepEl.value);
+  let firstDelay = Number(delay.value);
+  let delayStep = Number(step.value);
 
-  for (let i = 0; i < inputAmountEl.value; i += 1) {
+  for (let i = 0; i < amount.value; i += 1) {
     createPromise(1 + i, firstDelay + i * delayStep)
       .then(({ position, delay }) => {
         Notiflix.Notify.success(
@@ -43,4 +40,4 @@ const onSabmit = evt => {
   form.reset();
 };
 
-btnSubmitEl.addEventListener('click', onSabmit);
+form.addEventListener('submit', onSabmit);

@@ -3,6 +3,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
 document.body.style.backgroundColor = '#ADFF2F';
+
 const inputEl = document.querySelector('#datetime-picker');
 const btnStartEl = document.querySelector('[data-start]');
 const dataDaysEl = document.querySelector('[data-days]');
@@ -17,8 +18,8 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-  onClose(selectedDates) {
-    if (selectedDates[0] < new Date()) {
+  onClose([selectedDates]) {
+    if (selectedDates < Date.now()) {
       Notiflix.Notify.failure('Please choose a date in the future');
       btnStartEl.disabled = true;
     } else {
@@ -34,23 +35,24 @@ function addLeadingZero(value) {
 }
 const onStart = () => {
   let timer = setInterval(() => {
-    let countdown = new Date(inputEl.value) - new Date();
+    let countdown = new Date(inputEl.value) - Date.now();
 
     btnStartEl.disabled = true;
 
-    if (countdown >= 0) {
-      let timeObject = convertMs(countdown);
-
-      dataDaysEl.textContent = addLeadingZero(timeObject.days);
-      dataHoursEl.textContent = addLeadingZero(timeObject.hours);
-      dataMinutesEl.textContent = addLeadingZero(timeObject.minutes);
-      dataSecondsEl.textContent = addLeadingZero(timeObject.seconds);
-    } else {
+    if (countdown < 0) {
       clearInterval(timer);
+      return;
     }
+
+    updateTimer(convertMs(countdown));
   }, 1000);
 };
-
+function updateTimer({ days, hours, minutes, seconds }) {
+  dataDaysEl.textContent = addLeadingZero(days);
+  dataHoursEl.textContent = addLeadingZero(hours);
+  dataMinutesEl.textContent = addLeadingZero(minutes);
+  dataSecondsEl.textContent = addLeadingZero(seconds);
+}
 btnStartEl.addEventListener('click', onStart);
 
 function convertMs(ms) {
@@ -71,7 +73,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
